@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { autor } from "../models/autor.js";
 
 class AutorController {
@@ -15,9 +16,21 @@ class AutorController {
         try {
             const id = req.params.id
             const autorBuscado = await autor.findById(id);
-            res.status(200).json(autorBuscado);
+
+            if(autorBuscado !== null) {
+                res.status(200).send(autorBuscado);
+            } else {
+                res.status(404).send({ message: "Autor não localizado"});
+            }
+        
         } catch {
-            res.status(500).json({ message: `${erro.message} - Falha na busca`});
+            
+            if(erro instanceof mongoose.Error.CastError){
+                res.status(400).send({message: "Dados fornecidos estão incorretos"})
+            } else {
+                res.status(500).send({message: "Erro interno de servidor"});
+            }
+            
         }
     };
 

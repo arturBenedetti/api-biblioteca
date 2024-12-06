@@ -16,9 +16,21 @@ class LivroController {
         try {
             const id = req.params.id
             const livroBuscado = await livro.findById(id);
-            res.status(200).json(livroBuscado);
+
+            if (livroBuscado != null){
+                res.status(200).json(livroBuscado);
+            } else {
+                res.status(404).send({ message: "Livro não localizado"});
+            }
+
         } catch {
-            res.status(500).json({ message: `${erro.message} - Falha na busca`});
+
+            if(erro instanceof mongoose.Error.CastError){
+                res.status(400).send({message: "Dados fornecidos estão incorretos"})
+            } else {
+                res.status(500).send({message: "Erro interno de servidor"});
+            } 
+
         }
     };
 
