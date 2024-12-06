@@ -1,6 +1,7 @@
 import express from "express";
 import conectaBanco from "./config/dbConnect.js";
 import routes from "./routes/index.js";
+import manipuladorErros from "./middlewares/manipuladorErros.js";
 
 const conexao = await conectaBanco();
 
@@ -13,6 +14,9 @@ conexao.once("open", () => {
 });
 
 const app = express();
+app.use(express.json());
 routes(app);
+
+app.use(manipuladorErros);
 
 export default app;
